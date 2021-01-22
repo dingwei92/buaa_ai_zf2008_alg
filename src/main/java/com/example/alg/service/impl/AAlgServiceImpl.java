@@ -28,7 +28,15 @@ public class AAlgServiceImpl {
     private List<Integer> moveArr = new LinkedList<Integer>();
 
     // 定义终点状态
-    private static final Integer WIN_STATE = 123456780;
+    private  Integer WIN_STATE = 123456780;
+
+    public Integer getWIN_STATE() {
+        return WIN_STATE;
+    }
+
+    public void setWIN_STATE(Integer WIN_STATE) {
+        this.WIN_STATE = WIN_STATE;
+    }
 
     // 保存已经搜索过的状态
     private Set<Integer> statusSet = new HashSet<Integer>();

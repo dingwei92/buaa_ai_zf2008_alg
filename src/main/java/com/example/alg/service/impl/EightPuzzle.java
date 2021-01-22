@@ -1,6 +1,7 @@
 package com.example.alg.service.impl;
 
 import com.example.alg.dto.AlgRepDTO;
+import com.example.alg.dto.Constant;
 import com.example.alg.dto.open;
 
 import java.util.*;
@@ -19,6 +20,15 @@ public class EightPuzzle implements Comparable {
     private int misposition;            //启发函数 h(n)：到目标的最小估计(记录和目标状态有多少个数不同)
     private EightPuzzle parent;            //当前状态的父状态
     private ArrayList<EightPuzzle> answer = new ArrayList<EightPuzzle>();    //保存最终路径
+    private Integer qifaFlag;
+
+    public Integer getQifaFlag() {
+        return qifaFlag;
+    }
+
+    public void setQifaFlag(Integer qifaFlag) {
+        this.qifaFlag = qifaFlag;
+    }
 
     public int[] getNum() {
         return num;
@@ -77,12 +87,7 @@ public class EightPuzzle implements Comparable {
      * @param target
      */
     public void init(EightPuzzle target) {
-        int temp = 0;
-        for (int i = 0; i < 9; i++) {
-            if (num[i] != target.getNum()[i])
-                temp++;            //记录当前节点与目标节点差异的度量
-        }
-        this.setMisposition(temp);
+        this.setMisposition(qifa(target.getNum(), Constant.qifa));
         if (this.getParent() == null) {
             this.setDepth(0);    //初始化步数（深度）
         } else {
@@ -90,6 +95,43 @@ public class EightPuzzle implements Comparable {
         }
         this.setEvaluation(this.getDepth() + this.getMisposition());//返回当前状态的估计值
     }
+/**
+ * @Description //启发函数
+ * @Param
+ * @return
+ **/
+    public int qifa(int[] aa, Integer ii) {
+        if (ii == null || ii == 1) {
+            int temp = 0;
+            for (int i = 0; i < 9; i++) {
+                if (num[i] != aa[i])
+                    temp++;            //记录当前节点与目标节点差异的度量
+            }
+            return temp;
+        } else {
+            int sum=0;
+            /*2点之间欧式距离*/
+            for (int i = 0; i < 9; i++) {
+                for (int j= 0; j< aa.length; j++){
+                    if(num[i]==aa[j]){
+                        sum+=jisua(i,j);
+                        break;
+                    }
+                }
+
+            }
+            return sum;
+        }
+    }
+
+    private int jisua(int a,int b){
+        int a1=a/3;
+        int a2=a%3;
+        int b1=b/3;
+        int b2=b%3;
+       return Math.abs(Math.abs(a1-b1)-Math.abs(a2-b2)) ;
+    }
+
 
     /**
      * 求逆序值并判断是否有解，逆序值同奇或者同偶才有解
@@ -296,19 +338,19 @@ public class EightPuzzle implements Comparable {
             //初始化初始状态
             start.init(target);
             open.add(start);
-            List openList=new ArrayList();
-            List closeList=new ArrayList();
+            List openList = new ArrayList();
+            List closeList = new ArrayList();
             while (open.isEmpty() == false) {
                 cc++;
-                List openList1=new ArrayList();
-                List closeList2=new ArrayList();
+                List openList1 = new ArrayList();
+                List closeList2 = new ArrayList();
                 open.forEach(par -> {
-                    com.example.alg.dto.open o=new open();
-                    Map map=new HashMap();
-                    map.put("depth",par.getDepth());
-                    map.put("num",par.getNum());
-                    map.put("evaluation",par.evaluation);
-                    map.put("misposition",par.getMisposition());
+                    com.example.alg.dto.open o = new open();
+                    Map map = new HashMap();
+                    map.put("depth", par.getDepth());
+                    map.put("num", par.getNum());
+                    map.put("evaluation", par.evaluation);
+                    map.put("misposition", par.getMisposition());
                     openList1.add(map);
                 });
                 openList.add(openList1);
@@ -317,7 +359,7 @@ public class EightPuzzle implements Comparable {
                 open.remove(0);
                 close.add(best);
                 close.forEach(par -> {
-                    com.example.alg.dto.open o=new open();
+                    com.example.alg.dto.open o = new open();
                     o.setDepth(par.getDepth());
                     o.setNum(par.getNum());
                     o.setEvaluation(par.evaluation);
@@ -366,6 +408,7 @@ public class EightPuzzle implements Comparable {
             }
         } else
             algRepDTO.setFlag(false);
+        System.out.println(algRepDTO.getOpenlist().size());
         return algRepDTO;
 
     }

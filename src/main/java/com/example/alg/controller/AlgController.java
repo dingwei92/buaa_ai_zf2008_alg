@@ -2,6 +2,7 @@ package com.example.alg.controller;
 
 import com.example.alg.dto.AlgRepDTO;
 import com.example.alg.dto.AlgReqDTO;
+import com.example.alg.dto.Constant;
 import com.example.alg.service.impl.AAlgServiceImpl;
 
 
@@ -39,6 +40,12 @@ public class AlgController {
                 array[2][1] = algReqDTO.getList1().get(7);
                 array[2][2] = algReqDTO.getList1().get(8);
                 AAlgServiceImpl aAlgService = new AAlgServiceImpl(array);
+                StringBuffer sb = new StringBuffer();
+                algReqDTO.getList3().forEach(par -> {
+                    sb.append(par);
+                });
+                Integer end = Integer.valueOf(sb.toString());
+                aAlgService.setWIN_STATE(end);
                 boolean flag = aAlgService.solve();
                 if (!flag) {
                     return new AlgRepDTO(false);
@@ -48,6 +55,7 @@ public class AlgController {
                 algRepDTO.setFlag(true);
                 return algRepDTO;
             case "2":
+                Constant.qifa = algReqDTO.getMispositiontype();
                 EightPuzzle eightPuzzle = new EightPuzzle();
                 int[] array1 = algReqDTO.getList1().stream().mapToInt(Integer::valueOf).toArray();
                 int[] array2;
